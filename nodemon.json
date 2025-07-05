@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "js,json",
+  "ignore": ["data/EpisodeData.json", "logs/*", "db/*", ".env"],
+  "exec": "node src/bot/bot.js"
+}
