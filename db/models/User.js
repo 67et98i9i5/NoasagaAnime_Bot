@@ -18,25 +18,11 @@ const NoasagaUserData = new mongoose.Schema({
     default: []
   },
 
-  completed: {
-    type: [
-      {
-        anime_id: { type: String, required: true },
-        anime_title: { type: String, required: true },
-        season_id: { type: String },
-        completed_on: { type: Date, default: Date.now },
-        quality: { type: String }
-      }
-    ],
-    default: []
-  },
-
   settings: {
     auto_next: { type: Boolean, default: false },
     default_quality: { type: String, default: null },
     reset_enabled: {
-      recents: { type: String, default: 'enabled' },
-      completed: { type: String, default: 'enabled' }
+      recents: { type: String, default: 'enabled' }
     },
     notifications: {
       new_episodes: { type: Boolean, default: false },

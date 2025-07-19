@@ -1,10 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 const dataPath = path.resolve(__dirname, '../../../data/EpisodeData.json');
-const episodeData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+
+let episodeData;
+try {
+  episodeData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+} catch (err) {
+  episodeData = { anime_list: {} };
+}
 
 module.exports = async function listAnime(ctx, page = 1) {
-  const animeNames = Object.keys(episodeData.anime_list);
+  const animeList = episodeData.anime_list || {};
+  const animeNames = Object.keys(animeList);
+  if (!animeNames.length) {
+    return ctx.editMessageText('No anime available to display.');
+  }
+
   const perPage = 10;
   const totalPages = Math.ceil(animeNames.length / perPage);
 
@@ -24,7 +35,7 @@ module.exports = async function listAnime(ctx, page = 1) {
   if (page < totalPages) nav.push({ text: 'Next ▶', callback_data: `animepage_${page + 1}` });
   if (nav.length) buttons.push(nav);
 
-  await ctx.editMessageText(
+  return ctx.editMessageText(
     '*Select an anime:*',
     {
       parse_mode: 'Markdown',

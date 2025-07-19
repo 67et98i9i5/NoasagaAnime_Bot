@@ -23,6 +23,11 @@ const processSearchInput = require('../searchbar/processSearchInput');
 const { flushUserStatesToDB } = require('../state/syncScheduler');
 const { setUserState } = require('../state/userStateCache');
 
+const handleLeaderboard = require('../helpers/leaderboard/leaderboard');
+const handleUserLeaderboard = require('../helpers/leaderboard/userLeaderboardHandler');
+const handleAnimeLeaderboard = require('../helpers/leaderboard/animeLeaderBoardHandler');
+
+
 const bot = new Telegraf(process.env.BOT_TOKEN);
 connectDB();
 
@@ -111,11 +116,6 @@ bot.action('personal_stuff', async (ctx) => {
   await ctx.editMessageText('Personal dashboard Coming Soon...');
 });
 
-bot.action('leaderboard', async (ctx) => {
-  await ctx.answerCbQuery();
-  await ctx.editMessageText('Leaderboard coming soon.');
-});
-
 bot.action('settings', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.editMessageText('Settings panel coming soon.');
@@ -127,6 +127,34 @@ bot.on('message', async (ctx, next) => {
   }
   return next();
 });
+
+bot.action(/^animepage_(\d+)$/, async (ctx) => {
+  const page = parseInt(ctx.match[1]);
+  await ctx.answerCbQuery();
+  await listAnime(ctx, page);
+});
+
+bot.action('leaderboard', async (ctx) => {
+  try {
+    await ctx.answerCbQuery();
+  } catch (_) {}
+  await handleLeaderboard(ctx);
+});
+
+bot.action('leaderboard_users', async (ctx) => {
+  try {
+    await ctx.answerCbQuery();
+  } catch (_) {}
+  await handleUserLeaderboard(ctx);
+});
+
+bot.action('leaderboard_anime', async (ctx) => {
+  try {
+    await ctx.answerCbQuery();
+  } catch (_) {}
+  await handleAnimeLeaderboard(ctx);
+});
+
 
 bot.on('callback_query', async (ctx) => {
   const data = ctx.callbackQuery.data;
